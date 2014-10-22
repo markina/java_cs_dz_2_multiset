@@ -1,10 +1,8 @@
-package ru.compscicenter.java2014;
+package ru.compscicenter.java2014.collections;
 
 import ru.compscicenter.java2014.collections.MultiSet;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -13,6 +11,8 @@ import java.util.stream.Stream;
  * Created by Markina Margarita on 20.10.14.
  */
 public class MultiSetImpl<E> implements MultiSet<E> {
+  Map<E, Integer> MultiSet = new HashMap<>();
+  int size = 0;
 
   /**
    * Creates a {@link java.util.Spliterator} over the elements in this collection.
@@ -103,24 +103,14 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     return null;
   }
 
-  /**
-   * Returns the number of elements in this multiset, including all duplicates
-   *
-   * @return the number of elements in this multiset, including all duplicates
-   */
   @Override
   public int size() {
-    return 0;
+    return size;
   }
 
-  /**
-   * Returns <tt>true</tt> if this collection contains no elements.
-   *
-   * @return <tt>true</tt> if this collection contains no elements
-   */
   @Override
   public boolean isEmpty() {
-    return false;
+    return size == 0;
   }
 
   /**
