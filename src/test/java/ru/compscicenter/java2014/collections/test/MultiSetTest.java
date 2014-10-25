@@ -84,12 +84,10 @@ public class MultiSetTest {
     assert (multiSet.size() == 0);
   }
 
-
   private void newMultiSetMustBeEmpty() throws Exception {
     assertThat(newMultiSet()).isEmpty();
     assertThat(newMultiSet()).hasSize(0);
   }
-
 
   /*
    * This is constructor without parameters for your MultiSet implementation.
