@@ -28,7 +28,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public int size() {
-    return 0;
+    return size;
   }
 
   /**
@@ -38,7 +38,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public boolean isEmpty() {
-    return false;
+    return size == 0;
   }
 
   /**
@@ -59,7 +59,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public boolean contains(Object o) {
-    return false;
+    return map.containsKey(o);
   }
 
   /**
@@ -71,7 +71,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public Iterator<E> iterator() {
-    return null;
+    return new MultiSetIterator();
   }
 
   /**
@@ -126,7 +126,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
   public boolean remove(Object e) {
     if (map.containsKey(e)) {
       size--;
-      if (map.get(e) == 0) {
+      if (map.get(e) == 1) {
         map.remove(e);
       } else {
         map.put((E) e, map.get(e) - 1);
@@ -149,21 +149,21 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public int remove(Object e, int occurrences) {
-    int occurrencesBefireTheOperation = 0;
+    int occurrencesBeforeTheOperation = 0;
     if (occurrences < 0) {
       throw new IllegalArgumentException();
     }
     if (map.containsKey(e)) {
-      occurrencesBefireTheOperation = map.get(e);
-      if (occurrencesBefireTheOperation <= occurrences) {
+      occurrencesBeforeTheOperation = map.get(e);
+      if (occurrencesBeforeTheOperation <= occurrences) {
         size -= occurrences;
         map.remove(e);
       } else {
         size -= occurrences;
-        map.put((E) e, occurrencesBefireTheOperation - occurrences);
+        map.put((E) e, occurrencesBeforeTheOperation - occurrences);
       }
     }
-    return occurrencesBefireTheOperation;
+    return occurrencesBeforeTheOperation;
   }
 
   /**
@@ -289,6 +289,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public <T> T[] toArray(T[] a) {
+
     return null;
   }
 
@@ -337,5 +338,54 @@ public class MultiSetImpl<E> implements MultiSet<E> {
   @Override
   public void clear() {
     map.clear();
+    size = 0;
+  }
+
+  private class MultiSetIterator implements Iterator<E> {
+    private Set<E> setKey;
+    private E currentKey;
+    private int cntByCurrentKey;
+    private Iterator<E> iterator;
+    int id = 0;
+
+    public MultiSetIterator() {
+      setKey = map.keySet();
+      iterator = setKey.iterator();
+      id = 0;
+    }
+
+    /**
+     * Returns {@code true} if the iteration has more elements.
+     * (In other words, returns {@code true} if {@link #next} would
+     * return an element rather than throwing an exception.)
+     *
+     * @return {@code true} if the iteration has more elements
+     */
+    @Override
+    public boolean hasNext() {
+      if (currentKey != null && cntByCurrentKey > id) {
+        return true;
+      } else {
+        return iterator.hasNext();
+      }
+    }
+
+    /**
+     * Returns the next element in the iteration.
+     *
+     * @return the next element in the iteration
+     * @throws java.util.NoSuchElementException if the iteration has no more elements
+     */
+    @Override
+    public E next() {
+      if (currentKey != null && cntByCurrentKey > id) {
+        ++id;
+      } else {
+        currentKey = iterator.next();
+        cntByCurrentKey = map.get(currentKey);
+        id = 1;
+      }
+      return currentKey;
+    }
   }
 }
