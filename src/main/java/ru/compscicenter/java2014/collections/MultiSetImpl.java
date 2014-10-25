@@ -1,9 +1,6 @@
 package ru.compscicenter.java2014.collections;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * Created by Markina Margarita on 20.10.14.
@@ -12,7 +9,6 @@ import java.util.stream.Stream;
 public class MultiSetImpl<E> implements MultiSet<E> {
   private Map<E, Integer> map;
   private int size;
-
 
   public MultiSetImpl() {
     map = new HashMap<>();
@@ -26,102 +22,23 @@ public class MultiSetImpl<E> implements MultiSet<E> {
 
 
   /**
-   * Creates a {@link java.util.Spliterator} over the elements in this collection.
-   * <p>
-   * Implementations should document characteristic values reported by the
-   * spliterator.  Such characteristic values are not required to be reported
-   * if the spliterator reports {@link java.util.Spliterator#SIZED} and this collection
-   * contains no elements.
-   * <p>
-   * <p>The default implementation should be overridden by subclasses that
-   * can return a more efficient spliterator.  In order to
-   * preserve expected laziness behavior for the {@link #stream()} and
-   * {@link #parallelStream()}} methods, spliterators should either have the
-   * characteristic of {@code IMMUTABLE} or {@code CONCURRENT}, or be
-   * <em><a href="Spliterator.html#binding">late-binding</a></em>.
-   * If none of these is practical, the overriding class should describe the
-   * spliterator's documented policy of binding and structural interference,
-   * and should override the {@link #stream()} and {@link #parallelStream()}
-   * methods to create streams using a {@code Supplier} of the spliterator,
-   * as in:
-   * <pre>{@code
-   *     Stream<E> s = StreamSupport.stream(() -> spliterator(), spliteratorCharacteristics)
-   * }</pre>
-   * <p>These requirements ensure that streams produced by the
-   * {@link #stream()} and {@link #parallelStream()} methods will reflect the
-   * contents of the collection as of initiation of the terminal stream
-   * operation.
+   * Returns the number of elements in this multiset, including all duplicates
    *
-   * @return a {@code Spliterator} over the elements in this collection
-   * @implSpec The default implementation creates a
-   * <em><a href="Spliterator.html#binding">late-binding</a></em> spliterator
-   * from the collections's {@code Iterator}.  The spliterator inherits the
-   * <em>fail-fast</em> properties of the collection's iterator.
-   * <p>
-   * The created {@code Spliterator} reports {@link java.util.Spliterator#SIZED}.
-   * @implNote The created {@code Spliterator} additionally reports
-   * {@link java.util.Spliterator#SUBSIZED}.
-   * <p>
-   * <p>If a spliterator covers no elements then the reporting of additional
-   * characteristic values, beyond that of {@code SIZED} and {@code SUBSIZED},
-   * does not aid clients to control, specialize or simplify computation.
-   * However, this does enable shared use of an immutable and empty
-   * spliterator instance (see {@link Spliterators#emptySpliterator()}) for
-   * empty collections, and enables clients to determine if such a spliterator
-   * covers no elements.
-   * @since 1.8
+   * @return the number of elements in this multiset, including all duplicates
    */
-  @Override
-  public Spliterator<E> spliterator() {
-    return null;
-  }
-
-  /**
-   * Returns a sequential {@code Stream} with this collection as its source.
-   * <p>
-   * <p>This method should be overridden when the {@link #spliterator()}
-   * method cannot return a spliterator that is {@code IMMUTABLE},
-   * {@code CONCURRENT}, or <em>late-binding</em>. (See {@link #spliterator()}
-   * for details.)
-   *
-   * @return a sequential {@code Stream} over the elements in this collection
-   * @implSpec The default implementation creates a sequential {@code Stream} from the
-   * collection's {@code Spliterator}.
-   * @since 1.8
-   */
-  @Override
-  public Stream<E> stream() {
-    return null;
-  }
-
-  /**
-   * Returns a possibly parallel {@code Stream} with this collection as its
-   * source.  It is allowable for this method to return a sequential stream.
-   * <p>
-   * <p>This method should be overridden when the {@link #spliterator()}
-   * method cannot return a spliterator that is {@code IMMUTABLE},
-   * {@code CONCURRENT}, or <em>late-binding</em>. (See {@link #spliterator()}
-   * for details.)
-   *
-   * @return a possibly parallel {@code Stream} over the elements in this
-   * collection
-   * @implSpec The default implementation creates a parallel {@code Stream} from the
-   * collection's {@code Spliterator}.
-   * @since 1.8
-   */
-  @Override
-  public Stream<E> parallelStream() {
-    return null;
-  }
-
   @Override
   public int size() {
-    return size;
+    return 0;
   }
 
+  /**
+   * Returns <tt>true</tt> if this collection contains no elements.
+   *
+   * @return <tt>true</tt> if this collection contains no elements
+   */
   @Override
   public boolean isEmpty() {
-    return size == 0;
+    return false;
   }
 
   /**
@@ -158,37 +75,35 @@ public class MultiSetImpl<E> implements MultiSet<E> {
   }
 
   /**
-   * Performs the given action for each element of the {@code Iterable}
-   * until all elements have been processed or the action throws an
-   * exception.  Unless otherwise specified by the implementing class,
-   * actions are performed in the order of iteration (if an iteration order
-   * is specified).  Exceptions thrown by the action are relayed to the
-   * caller.
+   * Adds a single occurrence of the specified element to this multiset.
+   * <p>
+   * Always returns <code>true</code>, because multiset always allows adding
+   * both new elements and new occurrences of known elements.
    *
-   * @param action The action to be performed for each element
-   * @throws NullPointerException if the specified action is null
-   * @implSpec <p>The default implementation behaves as if:
-   * <pre>{@code
-   *     for (T t : this)
-   *         action.accept(t);
-   * }</pre>
-   * @since 1.8
+   * @param e element to add
+   * @return <code>true</code>
    */
-  @Override
-  public void forEach(Consumer<? super E> action) {
-
-  }
-
   @Override
   public boolean add(E e) {
     add(e, 1);
     return true;
   }
 
+  /**
+   * Adds multiple occurrences of the specified element to this multiset.
+   *
+   * @param e           element to add
+   * @param occurrences number of element occurrences to add; can't be negative
+   * @return the count of element occurrences before the operation; possibly zero
+   * @throws IllegalArgumentException if <code>occurrences</code> is negative
+   */
   @Override
-  public int add(E e, int occurrences) throws IllegalArgumentException {
+  public int add(E e, int occurrences) {
     if (occurrences < 0) {
       throw new IllegalArgumentException();
+    }
+    if(e == null) {
+      throw new NullPointerException();
     }
     int occurrencesBeforeTheOperation = 0;
     size += occurrences;
@@ -201,6 +116,12 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     return occurrencesBeforeTheOperation;
   }
 
+  /**
+   * Removes a single occurrence of the specified element from this multiset, if present.
+   *
+   * @param e element to remove
+   * @return <code>true</code> if the element was found and removed
+   */
   @Override
   public boolean remove(Object e) {
     if (map.containsKey(e)) {
@@ -216,6 +137,16 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     }
   }
 
+  /**
+   * Removes multiple occurrences of the specified element from this multiset, if present.
+   * If multiset contains fewer copies of the element than given by <code>occurrences</code>
+   * parameter, all occurrences are removed.
+   *
+   * @param e           element to remove
+   * @param occurrences number of element occurrences to remove; can't be negative
+   * @return the count of element occurrences before the operation; possibly zero
+   * @throws IllegalArgumentException if <code>occurrences</code> is negative
+   */
   @Override
   public int remove(Object e, int occurrences) {
     int occurrencesBefireTheOperation = 0;
@@ -235,6 +166,13 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     return occurrencesBefireTheOperation;
   }
 
+  /**
+   * Returns the number of occurrences of an element in this multiset,
+   * or <code>0</code> if multiset does not contain this element.
+   *
+   * @param e the element to whose occurrences are to be returned
+   * @return the number of occurrences of an element in this multiset
+   */
   @Override
   public int count(Object e) {
     if (map.containsKey(e)) {
@@ -242,8 +180,20 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     } else {
       return 0;
     }
+
   }
 
+  /**
+   * Returns <code>true</code> if this multiset contains at least one occurrence of each element
+   * in the specified collection.
+   * <p>
+   * This method ignores the occurrence count of an element in the two collections; it may still
+   * return <code>true</code> even if other collections contains several occurrences of an element
+   * and this multiset contains only one.
+   *
+   * @param c the collection of elements to be looked up in this multiset
+   * @return <code>true</code> if this multiset contains at least one occurrence of each element in <code>c</code>
+   */
   @Override
   public boolean containsAll(Collection<?> c) {
     for (Object el : c) {
@@ -280,9 +230,26 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public boolean addAll(Collection<? extends E> c) {
-    return false;
+    if(c == this) {
+      throw new ClassCastException();
+    }
+    if(c == null) {
+      throw new NullPointerException();
+    }
+    int addSize = c.size();
+    for(E object: c) {
+
+      add(object);
+    }
+    size += addSize;
+    return addSize != 0;
   }
 
+  /**
+   * Returns an array containing all of the elements in this multiset including all duplicates.
+   *
+   * @return an array containing all of the elements in this collection
+   */
   @Override
   public Object[] toArray() {
     Object[] array = new Object[size];
@@ -334,32 +301,14 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public boolean removeAll(Collection<?> c) {
-    return false;
-  }
-
-  /**
-   * Removes all of the elements of this collection that satisfy the given
-   * predicate.  Errors or runtime exceptions thrown during iteration or by
-   * the predicate are relayed to the caller.
-   *
-   * @param filter a predicate which returns {@code true} for elements to be
-   *               removed
-   * @return {@code true} if any elements were removed
-   * @throws NullPointerException          if the specified filter is null
-   * @throws UnsupportedOperationException if elements cannot be removed
-   *                                       from this collection.  Implementations may throw this exception if a
-   *                                       matching element cannot be removed or if, in general, removal is not
-   *                                       supported.
-   * @implSpec The default implementation traverses all elements of the collection using
-   * its {@link #iterator}.  Each matching element is removed using
-   * {@link java.util.Iterator#remove()}.  If the collection's iterator does not
-   * support removal then an {@code UnsupportedOperationException} will be
-   * thrown on the first matching element.
-   * @since 1.8
-   */
-  @Override
-  public boolean removeIf(Predicate<? super E> filter) {
-    return false;
+    Set<E> set = new HashSet<>(map.keySet());
+    for(E e: set) {
+      if(c.contains(e)) {
+        size -= map.get(e);
+        map.remove(e);
+      }
+    }
+    return true;
   }
 
   /**
@@ -371,9 +320,20 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    */
   @Override
   public boolean retainAll(Collection<?> c) {
-    return false;
+    Set<E> set = new HashSet<>(map.keySet());
+    for(E e: set) {
+      if(!c.contains(e)) {
+        size -= map.get(e);
+        map.remove(e);
+      }
+    }
+    return true;
   }
 
+  /**
+   * Removes all of the elements from this multiset.
+   * The collection will be empty after this method returns.
+   */
   @Override
   public void clear() {
     map.clear();
