@@ -1,12 +1,20 @@
 package ru.compscicenter.java2014.collections;
 
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Created by Markina Margarita on 20.10.14.
  */
 
-public class MultiSetImpl<E> implements MultiSet<E> {
+public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E> {
   private Map<E, Integer> map;
   private int size;
 
@@ -15,7 +23,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     size = 0;
   }
 
-  public MultiSetImpl(Collection<? extends E> c) {
+  public MultiSetImpl(final Collection<? extends E> c) {
     this();
     addAll(c);
   }
@@ -27,7 +35,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return the number of elements in this multiset, including all duplicates
    */
   @Override
-  public int size() {
+  public final int size() {
     return size;
   }
 
@@ -37,7 +45,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <tt>true</tt> if this collection contains no elements
    */
   @Override
-  public boolean isEmpty() {
+  public final boolean isEmpty() {
     return size == 0;
   }
 
@@ -58,7 +66,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    *                              (<a href="#optional-restrictions">optional</a>)
    */
   @Override
-  public boolean contains(Object o) {
+  public final boolean contains(final Object o) {
     return map.containsKey(o);
   }
 
@@ -70,7 +78,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return an <tt>Iterator</tt> over the elements in this multiset
    */
   @Override
-  public Iterator<E> iterator() {
+  public final Iterator<E> iterator() {
     return new MultiSetIterator();
   }
 
@@ -84,7 +92,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <code>true</code>
    */
   @Override
-  public boolean add(E e) {
+  public final boolean add(final E e) {
     add(e, 1);
     return true;
   }
@@ -98,13 +106,11 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @throws IllegalArgumentException if <code>occurrences</code> is negative
    */
   @Override
-  public int add(E e, int occurrences) {
+  public final int add(final E e, final int occurrences) {
     if (occurrences < 0) {
       throw new IllegalArgumentException();
     }
-    if(e == null) {
-      throw new NullPointerException();
-    }
+    Objects.requireNonNull(e);
     int occurrencesBeforeTheOperation = 0;
     size += occurrences;
     if (map.containsKey(e)) {
@@ -123,7 +129,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <code>true</code> if the element was found and removed
    */
   @Override
-  public boolean remove(Object e) {
+  public final boolean remove(final Object e) {
     if (map.containsKey(e)) {
       size--;
       if (map.get(e) == 1) {
@@ -148,7 +154,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @throws IllegalArgumentException if <code>occurrences</code> is negative
    */
   @Override
-  public int remove(Object e, int occurrences) {
+  public final int remove(final Object e, final int occurrences) {
     int occurrencesBeforeTheOperation = 0;
     if (occurrences < 0) {
       throw new IllegalArgumentException();
@@ -174,7 +180,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return the number of occurrences of an element in this multiset
    */
   @Override
-  public int count(Object e) {
+  public final int count(final Object e) {
     if (map.containsKey(e)) {
       return map.get(e);
     } else {
@@ -195,9 +201,9 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <code>true</code> if this multiset contains at least one occurrence of each element in <code>c</code>
    */
   @Override
-  public boolean containsAll(Collection<?> c) {
+  public final boolean containsAll(final Collection<?> c) {
     for (Object el : c) {
-      if(!map.containsKey(el)) {
+      if (!map.containsKey(el)) {
         return false;
       }
     }
@@ -229,68 +235,16 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @see #add(Object)
    */
   @Override
-  public boolean addAll(Collection<? extends E> c) {
-    if(c == this) {
+  public final boolean addAll(final Collection<? extends E> c) {
+    if (c == this) {
       throw new ClassCastException();
     }
-    if(c == null) {
-      throw new NullPointerException();
-    }
+    Objects.requireNonNull(c);
     int addSize = c.size();
-    for(E object: c) {
-
+    for (E object : c) {
       add(object);
     }
-    size += addSize;
     return addSize != 0;
-  }
-
-  /**
-   * Returns an array containing all of the elements in this multiset including all duplicates.
-   *
-   * @return an array containing all of the elements in this collection
-   */
-  @Override
-  public Object[] toArray() {
-    Object[] array = new Object[size];
-    int y = 0;
-    for(E el: map.keySet()) {
-      int cnt = map.get(el);
-      for(int i = 0; i < cnt; i++) {
-        array[y] = el;
-        y++;
-      }
-    }
-    return array;
-  }
-
-  /**
-   * Returns an array containing all of the elements in this multiset including all duplicates.
-   * The runtime type of the returned array is that of the specified array.
-   * If the collection fits in the specified array, it is returned therein.
-   * Otherwise, a new array is allocated with the runtime type of the
-   * specified array and the size of this collection.
-   * <p>
-   * <p>If this collection fits in the specified array with room to spare
-   * (i.e., the array has more elements than this collection), the element
-   * in the array immediately following the end of the collection is set to
-   * <tt>null</tt>.  (This is useful in determining the length of this
-   * collection <i>only</i> if the caller knows that this collection does
-   * not contain any <tt>null</tt> elements.)
-   *
-   * @param a the array into which the elements of this collection are to be
-   *          stored, if it is big enough; otherwise, a new array of the same
-   *          runtime type is allocated for this purpose.
-   * @return an array containing all of the elements in this collection
-   * @throws ArrayStoreException  if the runtime type of the specified array
-   *                              is not a supertype of the runtime type of every element in
-   *                              this collection
-   * @throws NullPointerException if the specified array is null
-   */
-  @Override
-  public <T> T[] toArray(T[] a) {
-
-    return null;
   }
 
   /**
@@ -301,10 +255,10 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <code>true</code> if at least one element was found and removed
    */
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public final boolean removeAll(final Collection<?> c) {
     Set<E> set = new HashSet<>(map.keySet());
-    for(E e: set) {
-      if(c.contains(e)) {
+    for (E e : set) {
+      if (c.contains(e)) {
         size -= map.get(e);
         map.remove(e);
       }
@@ -320,10 +274,10 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * @return <code>true</code> if at least one element was removed
    */
   @Override
-  public boolean retainAll(Collection<?> c) {
+  public final boolean retainAll(final Collection<?> c) {
     Set<E> set = new HashSet<>(map.keySet());
-    for(E e: set) {
-      if(!c.contains(e)) {
+    for (E e : set) {
+      if (!c.contains(e)) {
         size -= map.get(e);
         map.remove(e);
       }
@@ -336,7 +290,7 @@ public class MultiSetImpl<E> implements MultiSet<E> {
    * The collection will be empty after this method returns.
    */
   @Override
-  public void clear() {
+  public final void clear() {
     map.clear();
     size = 0;
   }
@@ -346,7 +300,8 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     private E currentKey;
     private int cntByCurrentKey;
     private Iterator<E> iterator;
-    int id = 0;
+    private int id = 0;
+
 
     public MultiSetIterator() {
       setKey = map.keySet();
@@ -365,9 +320,8 @@ public class MultiSetImpl<E> implements MultiSet<E> {
     public boolean hasNext() {
       if (currentKey != null && cntByCurrentKey > id) {
         return true;
-      } else {
-        return iterator.hasNext();
       }
+      return iterator.hasNext();
     }
 
     /**
@@ -386,6 +340,60 @@ public class MultiSetImpl<E> implements MultiSet<E> {
         id = 1;
       }
       return currentKey;
+    }
+
+    /**
+     * Removes from the underlying collection the last element returned
+     * by this iterator (optional operation).  This method can be called
+     * only once per call to {@link #next}.  The behavior of an iterator
+     * is unspecified if the underlying collection is modified while the
+     * iteration is in progress in any way other than by calling this
+     * method.
+     *
+     * @throws UnsupportedOperationException if the {@code remove}
+     *                                       operation is not supported by this iterator
+     * @throws IllegalStateException         if the {@code next} method has not
+     *                                       yet been called, or the {@code remove} method has already
+     *                                       been called after the last call to the {@code next}
+     *                                       method
+     * @implSpec The default implementation throws an instance of
+     * {@link UnsupportedOperationException} and performs no other action.
+     */
+    public void remove() {
+      if (currentKey == null) {
+        throw new IllegalStateException();
+      }
+      if (cntByCurrentKey == 1) {
+        E oldCurrentKey = currentKey;
+        next();
+        map.remove(oldCurrentKey);
+      } else {
+        E oldCurrentKey = currentKey;
+        next();
+        map.put(oldCurrentKey, map.get(oldCurrentKey) - 1);
+      }
+    }
+
+    /**
+     * Performs the given action for each remaining element until all elements
+     * have been processed or the action throws an exception.  Actions are
+     * performed in the order of iteration, if that order is specified.
+     * Exceptions thrown by the action are relayed to the caller.
+     *
+     * @param action The action to be performed for each element
+     * @throws NullPointerException if the specified action is null
+     * @implSpec <p>The default implementation behaves as if:
+     * <pre>{@code
+     *     while (hasNext())
+     *         action.accept(next());
+     * }</pre>
+     * @since 1.8
+     */
+    public void forEachRemaining(final Consumer<? super E> action) {
+      Objects.requireNonNull(action);
+      while (hasNext()) {
+        action.accept(next());
+      }
     }
   }
 }

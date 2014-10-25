@@ -22,6 +22,7 @@ public class MultiSetTest {
     newMultiSetMustBeEmpty();
     checkSizeAddAndRemove();
     checkSizeAddCollectionAndRemoveOccurrences();
+
   }
 
   private void checkSizeAddAndRemove() {
@@ -73,20 +74,14 @@ public class MultiSetTest {
     collection.add(1);
     collection.add(1);
 
+    assert (collection.size() == 6);
+
     assert (multiSet.addAll(collection));
     assert (multiSet.size() == 6);
     assert (multiSet.remove(1, 4) == 6);
     assert (multiSet.size() == 2);
     assert (multiSet.remove(1, 2) == 2);
     assert (multiSet.size() == 0);
-
-
-
-
-
-
-
-
   }
 
 
