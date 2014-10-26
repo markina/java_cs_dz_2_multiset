@@ -457,7 +457,7 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
      */
     @Override
     public boolean hasNext() {
-      if(cntByCurrentKey == id) {
+      if (cntByCurrentKey == id) {
         return iterator.hasNext();
       }
       if (currentKey != null) {
