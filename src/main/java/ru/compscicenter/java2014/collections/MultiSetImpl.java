@@ -443,7 +443,7 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
 
 
     public MultiSetIterator() {
-      setKey = map.keySet();
+      setKey = new HashSet<>(map.keySet());
       iterator = setKey.iterator();
       id = 0;
     }
@@ -457,7 +457,10 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
      */
     @Override
     public boolean hasNext() {
-      if (currentKey != null && cntByCurrentKey > id) {
+      if(cntByCurrentKey == id) {
+        return iterator.hasNext();
+      }
+      if (currentKey != null) {
         return true;
       }
       return iterator.hasNext();
@@ -471,15 +474,19 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
      */
     @Override
     public E next() {
-      if (currentKey != null && cntByCurrentKey > id) {
-        ++id;
-      } else {
-        currentKey = iterator.next();
-        cntByCurrentKey = map.get(currentKey);
-        id = 1;
+      if (hasNext()) {
+        if (currentKey != null && cntByCurrentKey > id) {
+          ++id;
+        } else {
+          currentKey = iterator.next();
+          cntByCurrentKey = map.get(currentKey);
+          id = 1;
+        }
       }
       return currentKey;
+
     }
+
 
     /**
      * Removes from the underlying collection the last element returned
@@ -502,13 +509,11 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
       if (currentKey == null) {
         throw new IllegalStateException();
       }
+      E oldCurrentKey = currentKey;
+      size--;
       if (cntByCurrentKey == 1) {
-        E oldCurrentKey = currentKey;
-        next();
         map.remove(oldCurrentKey);
       } else {
-        E oldCurrentKey = currentKey;
-        next();
         map.put(oldCurrentKey, map.get(oldCurrentKey) - 1);
       }
     }

@@ -6,7 +6,6 @@ import ru.compscicenter.java2014.collections.MultiSetImpl;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
 import java.util.function.Consumer;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -29,12 +28,44 @@ public class MultiSetTest {
     checkAddOcc();
     checkRemove();
     checkEquals();
+    checkForEach();
     checkIterator();
 
 
   }
 
   private void checkIterator() {
+    List<Integer> list = new ArrayList<>();
+    list.add(1);
+    list.add(2);
+    list.add(3);
+    list.add(4);
+    list.add(5);
+    list.add(6);
+    list.add(7);
+
+    Iterator it = list.iterator();
+    while(it.hasNext()) {
+      it.next();
+      it.remove();
+    }
+    assert (list.size() == 0);
+
+
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+    ms1.add(2, 1);
+    ms1.add(3, 1);
+
+    Iterator<Integer> msIt = ms1.iterator();
+    while(msIt.hasNext()) {
+      msIt.next();
+      msIt.remove();
+    }
+
+    assert (ms1.size() == 0);
+  }
+
+  private void checkForEach() {
     MultiSet<Integer> ms1 = new MultiSetImpl<>();
     ms1.add(1, 2);
     ms1.add(2, 2);
