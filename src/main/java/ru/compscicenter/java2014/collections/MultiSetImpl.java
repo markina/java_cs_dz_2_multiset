@@ -28,6 +28,76 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
     addAll(c);
   }
 
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   * <p>
+   * The {@code equals} method implements an equivalence relation
+   * on non-null object references:
+   * <ul>
+   * <li>It is <i>reflexive</i>: for any non-null reference value
+   * {@code x}, {@code x.equals(x)} should return
+   * {@code true}.
+   * <li>It is <i>symmetric</i>: for any non-null reference values
+   * {@code x} and {@code y}, {@code x.equals(y)}
+   * should return {@code true} if and only if
+   * {@code y.equals(x)} returns {@code true}.
+   * <li>It is <i>transitive</i>: for any non-null reference values
+   * {@code x}, {@code y}, and {@code z}, if
+   * {@code x.equals(y)} returns {@code true} and
+   * {@code y.equals(z)} returns {@code true}, then
+   * {@code x.equals(z)} should return {@code true}.
+   * <li>It is <i>consistent</i>: for any non-null reference values
+   * {@code x} and {@code y}, multiple invocations of
+   * {@code x.equals(y)} consistently return {@code true}
+   * or consistently return {@code false}, provided no
+   * information used in {@code equals} comparisons on the
+   * objects is modified.
+   * <li>For any non-null reference value {@code x},
+   * {@code x.equals(null)} should return {@code false}.
+   * </ul>
+   * <p>
+   * The {@code equals} method for class {@code Object} implements
+   * the most discriminating possible equivalence relation on objects;
+   * that is, for any non-null reference values {@code x} and
+   * {@code y}, this method returns {@code true} if and only
+   * if {@code x} and {@code y} refer to the same object
+   * ({@code x == y} has the value {@code true}).
+   * <p>
+   * Note that it is generally necessary to override the {@code hashCode}
+   * method whenever this method is overridden, so as to maintain the
+   * general contract for the {@code hashCode} method, which states
+   * that equal objects must have equal hash codes.
+   *
+   * @param obj the reference object with which to compare.
+   * @return {@code true} if this object is the same as the obj
+   * argument; {@code false} otherwise.
+   * @see #hashCode()
+   * @see java.util.HashMap
+   */
+  @Override
+  public final boolean equals(final Object obj) {
+
+    if(! (obj instanceof MultiSetImpl)) {
+      return false;
+    }
+    MultiSet<E> multiObj = (MultiSetImpl<E>) obj;
+
+    if(multiObj.size() != size) {
+      return false;
+    }
+    Iterator<E> it1 = this.iterator();
+    Iterator<E> it2 = multiObj.iterator();
+
+    while(it1.hasNext()) {
+      E a = it1.next();
+      E b = it2.next();
+
+      if (!a.equals(b)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
    * Returns the number of elements in this multiset, including all duplicates
@@ -130,16 +200,14 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
    */
   @Override
   public final boolean remove(final Object e) {
-    if (map.containsKey(e)) {
-      size--;
-      if (map.get(e) == 1) {
-        map.remove(e);
-      } else {
-        map.put((E) e, map.get(e) - 1);
-      }
-      return true;
-    } else {
+
+    int occBefore = remove(e, 1);
+    if(occBefore == 0) {
       return false;
+    } else if (occBefore == 1) {
+      return !map.containsKey(e);
+    } else {
+      return map.get(e) == occBefore - 1;
     }
   }
 

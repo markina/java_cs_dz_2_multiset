@@ -22,7 +22,192 @@ public class MultiSetTest {
     newMultiSetMustBeEmpty();
     checkSizeAddAndRemove();
     checkSizeAddCollectionAndRemoveOccurrences();
+    checkToArray();
+    checkContains();
+    checkAddOcc();
+    checkRemove();
+    checkEquals();
 
+
+  }
+
+  private void checkEquals() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+    MultiSet<Integer> ms2 = new MultiSetImpl<>();
+
+    ms1.add(1, 2);
+    ms1.add(2, 2);
+    ms1.add(3);
+    ms1.add(10);
+    ms1.add(12, 2);
+    ms1.add(11, 1);
+    ms1.add(1, 1);
+
+    ms2.add(1);
+    ms2.add(2);
+    ms2.add(1);
+    ms2.add(3);
+    ms2.add(2);
+    ms2.add(10);
+    ms2.add(12);
+    ms2.add(11);
+    ms2.add(12);
+    ms2.add(1);
+
+    assert (ms1.equals(ms2));
+  }
+
+  private void checkRemove() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+
+    ms1.add(1, 2);
+    ms1.add(2, 2);
+    ms1.add(3);
+    ms1.add(10);
+    ms1.add(12, 2);
+    ms1.add(11, 1);
+    ms1.add(1, 1);
+
+
+    assert (ms1.remove(1));
+    assert (ms1.remove(2));
+    assert (ms1.remove(3));
+    assert (ms1.remove(1));
+    assert (ms1.remove(10));
+    assert (ms1.remove(12, 2) == 2);
+    assert (ms1.remove(11));
+    assert (ms1.remove(2));
+    assert (ms1.remove(1, 1) == 1);
+
+    assert (ms1.size() == 0);
+  }
+
+  private void checkAddOcc() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+
+    ms1.add(1, 2);
+    ms1.add(2, 2);
+    ms1.add(3);
+    ms1.add(10);
+    ms1.add(12, 2);
+    ms1.add(11, 1);
+    ms1.add(1, 1);
+
+    assert (ms1.contains(1));
+    assert (ms1.contains(2));
+    assert (ms1.contains(3));
+    assert (ms1.contains(10));
+    assert (ms1.contains(11));
+    assert (ms1.contains(12));
+
+    assert (!ms1.contains(111));
+    assert (!ms1.contains(21));
+    assert (!ms1.contains(31));
+    assert (!ms1.contains(101));
+    assert (!ms1.contains(111));
+    assert (!ms1.contains(121));
+
+    Integer[] ar = new Integer[10];
+    ms1.toArray(ar);
+    assert (ar.length == 10);
+    assert (ar[0] == 1);
+    assert (ar[1] == 1);
+    assert (ar[2] == 1);
+    assert (ar[3] == 2);
+    assert (ar[4] == 2);
+
+    assert (ar[5] == 3);
+    assert (ar[6] == 10);
+    assert (ar[7] == 11);
+    assert (ar[8] == 12);
+    assert (ar[9] == 12);
+  }
+
+  private void checkContains() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+
+    ms1.add(1);
+    ms1.add(2);
+    ms1.add(1);
+    ms1.add(3);
+    ms1.add(2);
+    ms1.add(10);
+    ms1.add(12);
+    ms1.add(11);
+    ms1.add(12);
+    ms1.add(1);
+
+    assert (ms1.contains(1));
+    assert (ms1.contains(2));
+    assert (ms1.contains(3));
+    assert (ms1.contains(10));
+    assert (ms1.contains(11));
+    assert (ms1.contains(12));
+
+    assert (!ms1.contains(111));
+    assert (!ms1.contains(21));
+    assert (!ms1.contains(31));
+    assert (!ms1.contains(101));
+    assert (!ms1.contains(111));
+    assert (!ms1.contains(121));
+
+
+    Integer[] ar = new Integer[10];
+    ms1.toArray(ar);
+    assert (ar.length == 10);
+    assert (ar[0] == 1);
+    assert (ar[1] == 1);
+    assert (ar[2] == 1);
+    assert (ar[3] == 2);
+    assert (ar[4] == 2);
+
+    assert (ar[5] == 3);
+    assert (ar[6] == 10);
+    assert (ar[7] == 11);
+    assert (ar[8] == 12);
+    assert (ar[9] == 12);
+  }
+
+  private void checkToArray() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+    Integer[] ar = new Integer[10];
+    ar[0] = 1;
+    ar[0] = 2;
+    ar[0] = 1;
+    ar[0] = 3;
+    ar[0] = 2;
+
+    ar[0] = 10;
+    ar[0] = 12;
+    ar[0] = 11;
+    ar[0] = 12;
+    ar[0] = 1;
+
+    ms1.add(1);
+    ms1.add(2);
+    ms1.add(1);
+    ms1.add(3);
+    ms1.add(2);
+    ms1.add(10);
+    ms1.add(12);
+    ms1.add(11);
+    ms1.add(12);
+    ms1.add(1);
+
+
+    ms1.toArray(ar);
+    assert (ar.length == 10);
+    assert (ar[0] == 1);
+    assert (ar[1] == 1);
+    assert (ar[2] == 1);
+    assert (ar[3] == 2);
+    assert (ar[4] == 2);
+
+    assert (ar[5] == 3);
+    assert (ar[6] == 10);
+    assert (ar[7] == 11);
+    assert (ar[8] == 12);
+    assert (ar[9] == 12);
   }
 
   private void checkSizeAddAndRemove() {
