@@ -6,6 +6,7 @@ import ru.compscicenter.java2014.collections.MultiSetImpl;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 import java.util.function.Consumer;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -49,23 +50,24 @@ public class MultiSetTest {
       it.next();
     }
 
-    Consumer<Integer> consumer = (Integer a) -> a += 5;
+    Consumer<Integer> consumer = (a) -> System.out.println(a);
     ms1.forEach(consumer);
 
     Integer[] ar = new Integer[10];
     ms1.toArray(ar);
     assert (ar.length == 10);
-    assert (ar[0] == 6);
-    assert (ar[1] == 3);
-    assert (ar[2] == 3);
-    assert (ar[3] == 4);
-    assert (ar[4] == 4);
+    assert (ar[0] == 1);
+    assert (ar[1] == 1);
+    assert (ar[2] == 1);
+    assert (ar[3] == 2);
+    assert (ar[4] == 2);
 
-    assert (ar[5] == 5);
-    assert (ar[6] == 12);
-    assert (ar[7] == 13);
-    assert (ar[8] == 14);
-    assert (ar[9] == 14);
+    assert (ar[5] == 3);
+    assert (ar[6] == 10);
+    assert (ar[7] == 11);
+    assert (ar[8] == 12);
+    assert (ar[9] == 12);
+
 
   }
 
