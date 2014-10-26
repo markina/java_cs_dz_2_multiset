@@ -77,18 +77,18 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
   @Override
   public final boolean equals(final Object obj) {
 
-    if(! (obj instanceof MultiSetImpl)) {
+    if (!(obj instanceof MultiSetImpl)) {
       return false;
     }
     MultiSet<E> multiObj = (MultiSetImpl<E>) obj;
 
-    if(multiObj.size() != size) {
+    if (multiObj.size() != size) {
       return false;
     }
     Iterator<E> it1 = this.iterator();
     Iterator<E> it2 = multiObj.iterator();
 
-    while(it1.hasNext()) {
+    while (it1.hasNext()) {
       E a = it1.next();
       E b = it2.next();
 
@@ -202,7 +202,7 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
   public final boolean remove(final Object e) {
 
     int occBefore = remove(e, 1);
-    if(occBefore == 0) {
+    if (occBefore == 0) {
       return false;
     } else if (occBefore == 1) {
       return !map.containsKey(e);
@@ -316,6 +316,29 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
   }
 
   /**
+   * Performs the given action for each element of the {@code Iterable}
+   * until all elements have been processed or the action throws an
+   * exception.  Unless otherwise specified by the implementing class,
+   * actions are performed in the order of iteration (if an iteration order
+   * is specified).  Exceptions thrown by the action are relayed to the
+   * caller.
+   *
+   * @param action The action to be performed for each element
+   * @throws NullPointerException if the specified action is null
+   * @implSpec <p>The default implementation behaves as if:
+   * <pre>{@code
+   *     for (T t : this)
+   *         action.accept(t);
+   * }</pre>
+   * @since 1.8
+   */
+  @Override
+  public void forEach(Consumer<? super E> action) {
+    Iterator<E> it = iterator();
+    it.forEachRemaining(action);
+  }
+
+  /**
    * For each element in given collection removes <em>all</em> occurrences
    * of the element from this multiset, if present.
    *
@@ -363,7 +386,7 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
     size = 0;
   }
 
-  private class MultiSetIterator implements Iterator<E> {
+  private class MultiSetIterator<E> implements Iterator<E> {
     private Set<E> setKey;
     private E currentKey;
     private int cntByCurrentKey;
@@ -459,8 +482,11 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
      */
     public void forEachRemaining(final Consumer<? super E> action) {
       Objects.requireNonNull(action);
-      while (hasNext()) {
-        action.accept(next());
+      for (E k : setKey) {
+        int cntK = map.get(k);
+        map.remove(k);
+        action.accept(k);
+        map.put(k, cntK);
       }
     }
   }

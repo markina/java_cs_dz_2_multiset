@@ -6,6 +6,7 @@ import ru.compscicenter.java2014.collections.MultiSetImpl;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.fest.assertions.api.Assertions.*;
 
@@ -27,7 +28,44 @@ public class MultiSetTest {
     checkAddOcc();
     checkRemove();
     checkEquals();
+    checkIterator();
 
+
+  }
+
+  private void checkIterator() {
+    MultiSet<Integer> ms1 = new MultiSetImpl<>();
+    ms1.add(1, 2);
+    ms1.add(2, 2);
+    ms1.add(3);
+    ms1.add(10);
+    ms1.add(12, 2);
+    ms1.add(11, 1);
+    ms1.add(1, 1);
+
+    Iterator<Integer> it = ms1.iterator();
+    for(int i = 0; i < ms1.size(); i++) {
+      assert (it.hasNext());
+      it.next();
+    }
+
+    Consumer<Integer> consumer = (Integer a) -> a += 5;
+    ms1.forEach(consumer);
+
+    Integer[] ar = new Integer[10];
+    ms1.toArray(ar);
+    assert (ar.length == 10);
+    assert (ar[0] == 6);
+    assert (ar[1] == 3);
+    assert (ar[2] == 3);
+    assert (ar[3] == 4);
+    assert (ar[4] == 4);
+
+    assert (ar[5] == 5);
+    assert (ar[6] == 12);
+    assert (ar[7] == 13);
+    assert (ar[8] == 14);
+    assert (ar[9] == 14);
 
   }
 
