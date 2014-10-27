@@ -1,5 +1,7 @@
 package ru.compscicenter.java2014.collections;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.HashMap;
@@ -120,7 +122,9 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
     if (!(obj instanceof MultiSetImpl)) {
       return false;
     }
-    MultiSet<E> multiObj = (MultiSetImpl<E>) obj;
+
+    @SuppressWarnings("unchecked")
+    MultiSet<E> multiObj = (MultiSetImpl < E >) obj;
 
     if (multiObj.size() != size) {
       return false;
@@ -460,10 +464,7 @@ public class MultiSetImpl<E> extends AbstractCollection<E> implements MultiSet<E
       if (cntByCurrentKey == id) {
         return iterator.hasNext();
       }
-      if (currentKey != null) {
-        return true;
-      }
-      return iterator.hasNext();
+      return currentKey != null || iterator.hasNext();
     }
 
     /**
